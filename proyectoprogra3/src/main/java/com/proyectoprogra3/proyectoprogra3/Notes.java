@@ -3,16 +3,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.util.comparator.BooleanComparator;
+import org.springframework.web.servlet.FlashMap;
 
 public class Notes {
     //************************************************************Variables************************************************************
-    private String noteText;
-    private String noteBackgroundColor;
-    private String noteTitle;
-    private Boolean notePasswordEnabled;
-    private String notePassword;
-    private String noteCategory;
-    private List<String> noteSharedWithListOfUsers;
+    private String noteText; //El texto en si que lleva la nota
+    private String noteBackgroundColor; //Variable para almacenar algun color para usar como fondo en la nota
+    private String noteTitle; //Titulo de la nota
+    private Boolean notePasswordEnabled; //Variable para almacenar si la nota requiere contraseña para ser abierta
+    private String notePassword; //contraseña de la nota
+    private String noteCategory; //Categoria customizable por el usuario para las notas
+    private List<String> noteSharedWithListOfUsers; //Lista de usuarios con acceso a la nota especifica
 
     //************************************************************Contructors************************************************************
     public Notes(){
@@ -20,6 +21,18 @@ public class Notes {
         this.noteText = "";
         this.noteBackgroundColor = "#FFFFFF";
         this.noteTitle = "";
+        this.notePasswordEnabled = false;
+        this.notePassword = "";
+        this.noteCategory = "";
+    }
+
+    public Notes(String noteText, String noteTitle){
+
+        //Build list of Shared Users (List must be made of user objects)
+        this.noteTitle = noteTitle;
+        this.noteText = noteText;
+        this.noteSharedWithListOfUsers = null;
+        this.noteBackgroundColor = "#FFFFFF";
         this.notePasswordEnabled = false;
         this.notePassword = "";
         this.noteCategory = "";
