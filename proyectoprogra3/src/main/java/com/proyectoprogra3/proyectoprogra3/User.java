@@ -2,6 +2,7 @@ package com.proyectoprogra3.proyectoprogra3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class User {
     //************************************************************Variables************************************************************
@@ -9,17 +10,26 @@ public class User {
     private String nombre;
     private String apellido;
     private String password;
+    private String email;
+    private LocalDate createdDate;
+    private LocalDate modifiedDate;
+    private boolean activeStatus;
+
     private List<Notes> listaNotas = new ArrayList<Notes>();
 
     //************************************************************Contructors************************************************************
     public User() {
     }
 
-    public User(int usuarioID, String nombre, String apellido, String password) {
+    public User(int usuarioID, String nombre, String apellido, String password, String email, LocalDate createdDate, LocalDate modifiedDate, boolean activeStatus) {
         this.usuarioID = usuarioID;
         this.nombre = nombre;
         this.apellido = apellido;
         this.password = password;
+        this.email = email;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+        this.activeStatus = activeStatus;
     }
 
     //************************************************************Setters and Getters************************************************************
@@ -38,6 +48,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setModifiedDate(LocalDate modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public void setActiveStatus(boolean activeStatus) {
+        this.activeStatus = activeStatus;
     }
 
     public void setListaNotas(List<Notes> listaNotas) {
@@ -60,36 +86,38 @@ public class User {
     public String getPassword() {
         return password;
     }
-    
+
+    public String getEmail() {
+        return email;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public LocalDate getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public boolean getActiveStatus() {
+        return activeStatus;
+    }
+
     public List<Notes> getListaNotas() {
         return listaNotas;
     }
+    
     //************************************************************Class Funtions************************************************************
-    public void genNotas(int numUser){
-        Notes miNota5 = new Notes("Texto de nota 0 Usuario"+numUser, "Titulo de nota 0 Usuario"+numUser);
-        Notes miNota0 = new Notes("Texto de nota 1 Usuario"+numUser, "Titulo de nota 1 Usuario"+numUser);
-        Notes miNota1 = new Notes("Texto de nota 2 Usuario"+numUser, "Titulo de nota 2 Usuario"+numUser);
-        Notes miNota2 = new Notes("Texto de nota 3 Usuario"+numUser, "Titulo de nota 3 Usuario"+numUser);
-        Notes miNota3 = new Notes("Texto de nota 4 Usuario"+numUser, "Titulo de nota 4 Usuario"+numUser);
-        Notes miNota4 = new Notes("Texto de nota 5 Usuario"+numUser, "Titulo de nota 5 Usuario"+numUser);
 
-        this.listaNotas.add(miNota0);
-        this.listaNotas.add(miNota1);
-        this.listaNotas.add(miNota2);
-        this.listaNotas.add(miNota3);
-        this.listaNotas.add(miNota4);
-        this.listaNotas.add(miNota5);
-    }
+    // public void addNota(String noteText, String noteTitle){
+    //     Notes laNote = new Notes(noteText, noteTitle);
+    //     this.listaNotas.add(laNote);
+    // }
 
-    public void addNota(String noteText, String noteTitle){
-        Notes laNote = new Notes(noteText, noteTitle);
-        this.listaNotas.add(laNote);
-    }
-
-    public void updateNota(String noteText, String noteTitle, int index){
-        Notes newNote = new Notes(noteText, noteTitle);
-        this.listaNotas.set(index, newNote);
-    }
+    // public void updateNota(String noteText, String noteTitle, int index){
+    //     Notes newNote = new Notes(noteText, noteTitle);
+    //     this.listaNotas.set(index, newNote);
+    // }
 
     public void deleteNota(int index){
         this.listaNotas.remove(index);

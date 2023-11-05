@@ -1,43 +1,51 @@
 package com.proyectoprogra3.proyectoprogra3;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 public class ProyectController {
-    private List<User> listaUsuarios = new ArrayList<>(); 
+    private List<User> listaUsuarios = new ArrayList<>();
+    //private LogicLayer miLogicLayer = new LogicLayer();
 
-    public void genUsers(){
-        User usuario0 = new User(0, "Pedro", "Perez", "contrasena0");
-        User usuario1 = new User(1,"Pablo", "Ramirez", "contrasena1");
-        User usuario2 = new User(2,"Amanda", "Rodriguez", "contrasena2");
-        User usuario3 = new User(3,"Jimena", "Gonzalez", "contrasena3");
-        User usuario4 = new User(4,"Ramon", "Parks", "contrasena4");
-        User usuario5 = new User(5,"Andrea", "Drummond", "contrasena5");
+    @Autowired
+    private LogicLayer logicService;
 
-        listaUsuarios.add(usuario0);
-        listaUsuarios.add(usuario1);
-        listaUsuarios.add(usuario2);
-        listaUsuarios.add(usuario3);
-        listaUsuarios.add(usuario4);
-        listaUsuarios.add(usuario5);
-    }
+    // public void genUsers(){
+    //     User usuario0 = new User(0, "Pedro", "Perez", "contrasena0");
+    //     User usuario1 = new User(1,"Pablo", "Ramirez", "contrasena1");
+    //     User usuario2 = new User(2,"Amanda", "Rodriguez", "contrasena2");
+    //     User usuario3 = new User(3,"Jimena", "Gonzalez", "contrasena3");
+    //     User usuario4 = new User(4,"Ramon", "Parks", "contrasena4");
+    //     User usuario5 = new User(5,"Andrea", "Drummond", "contrasena5");
 
-    @GetMapping("/genData")
-    public void genData(){
-        this.genUsers();
-        int index = 0;
+    //     listaUsuarios.add(usuario0);
+    //     listaUsuarios.add(usuario1);
+    //     listaUsuarios.add(usuario2);
+    //     listaUsuarios.add(usuario3);
+    //     listaUsuarios.add(usuario4);
+    //     listaUsuarios.add(usuario5);
+    // }
 
-        for(User usersIterador : listaUsuarios){
-            usersIterador.genNotas(index);
-            index++;
-        }
+    // @GetMapping("/genData")
+    // public void genData(){
+    //     //this.genUsers();
+    //     int index = 0;
+
+    //     for(User usersIterador : listaUsuarios){
+    //         usersIterador.genNotas(index);
+    //         index++;
+    //     }
         
-    }
+    // }
 
     @GetMapping("/printAllUsersData")
     public void printData(){
@@ -50,8 +58,76 @@ public class ProyectController {
         }
     }
 
+
+    //------------------------------------------------------Listos para proyecto------------------------------------------------------
+    //------------------------------------------------------------Usuarios------------------------------------------------------------
     @GetMapping("/getListaUsuarios")
     public List<User> getListaUsuarios(){
-        return listaUsuarios;
+        return logicService.getListaUsuarios();
     }
+
+    @GetMapping("/getUsuario")
+    public User getListaUsuarios(String email){
+        return logicService.getUsuario(email);
+    }
+
+    @PostMapping("/addUsuario")
+    public String addUsuario(String nombre, String apellido, String email, String password){
+        if (logicService.addUser(nombre, apellido, email, password)){
+            return "Usuario creado con exito! : Nombre: "+ nombre +" | Apellido: "+ apellido +" | Email: "+ email;
+        }else{
+            return "Creacion de usuario fallida!";
+        }
+    }
+
+    @PutMapping("/updateUsuario")
+    public String updateUsuario(Integer userid, String nombre, String apellido, String email, String password){
+        if (logicService.updateUser(userid, nombre, apellido, email, password)){
+            return "Usuario actualizado con exito! : Nombre: "+ nombre +" | Apellido: "+ apellido +" | Email: "+ email;
+        }else{
+            return "Actualizacion de usuario fallida!";
+        }
+    }
+
+    @DeleteMapping("/deleteUsuario")
+    public String deleteUsuario(String email){
+        if (logicService.deleteUser(email)){
+            return "Usuario eliminado con exito! : Email: "+ email;
+        }else{
+            return "Error al eliminar usuario!";
+        }
+    }
+
+    //------------------------------------------------------------Notas------------------------------------------------------------
+
+    @PostMapping("/addNota")
+    public String addNota(int userID, String textoNota, String tituloNota){
+        if (logicService.addNote(userID,textoNota,tituloNota)){
+            return "La nota fue agregada con exito";
+        }else{
+            return "Error al agregar nota!";
+        }
+    }
+
+    @GetMapping("/getAllNotas")
+    public List<Notes> getallNotes(){
+        return logicService.getAllNotes();
+    }
+
+    @GetMapping("/getNotasDeUsuario")
+    public List<Notes> getNotesForUser(String userEmail){
+        return logicService.getNotesForUser(userEmail);
+    }
+    
+    @PutMapping("/updateNota")
+    public String updateNote(Integer noteID, String texto, String titulo){
+        if (logicService.updateNote(noteID, texto, titulo)){
+            return "Nota actualizada con exito!";
+        }else{
+            return "Actualizacion de Nota fallida!";
+        }
+    }
+
+    //Falta!
+    // DeleteNota , setPassWordEnabled, setNotePassword, setNoteCategory, setNoteSharedEmails, setBackGroundColor
 }
