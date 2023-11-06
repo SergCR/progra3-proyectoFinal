@@ -148,4 +148,78 @@ public class DataAccessLayer {
             return false;
         }
     }
+
+    public Boolean deleteNote(Integer noteID){
+        try {
+            jdbcTemplate.execute("DELETE FROM inotes.notes WHERE note_id = "+noteID);
+            //System.out.println(myList);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public Boolean setPasswordEnabled(Boolean enabled, Integer noteID, String password){
+        try {
+            String todayDate = LocalDate.now().toString();
+            if (enabled){
+                jdbcTemplate.execute("UPDATE inotes.notes SET pw_enabled = 1, note_password = '"+password+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+            }else{
+                jdbcTemplate.execute("UPDATE inotes.notes SET pw_enabled = 0, note_password = '', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+            }
+            //System.out.println(myList);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public Boolean setNoteCategory(Integer noteID, String categoryName){
+        try {
+            String todayDate = LocalDate.now().toString();
+            jdbcTemplate.execute("UPDATE inotes.notes SET note_category = '"+categoryName+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+            //System.out.println(myList);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public Boolean setBackgroundColor(Integer noteID, String hexColorCode){
+        try {
+            String todayDate = LocalDate.now().toString();
+            hexColorCode = "#"+hexColorCode;
+            jdbcTemplate.execute("UPDATE inotes.notes SET bg_color = '"+hexColorCode+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+            //System.out.println(myList);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public String getEmailsCompatidos(Integer noteID){
+        List<Map<String, Object>> myList = null;
+        try {
+            myList = jdbcTemplate.queryForList("SELECT note_shared_with_emails FROM inotes.notes WHERE note_id = "+noteID);
+            String emails = myList.get(0).get("note_shared_with_emails").toString();
+            return emails;
+        } catch (Exception e) {
+            System.out.println(e);
+            return "transaccion invalida";
+        }
+    }
+
+    public Boolean setNoteSharedEmails(Integer noteID, String emails){
+        try {
+            jdbcTemplate.execute("UPDATE inotes.notes SET note_shared_with_emails = '"+emails+"' WHERE note_id = "+noteID);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
 }

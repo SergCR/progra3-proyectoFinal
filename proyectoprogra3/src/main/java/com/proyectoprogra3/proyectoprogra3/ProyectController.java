@@ -128,6 +128,48 @@ public class ProyectController {
         }
     }
 
-    //Falta!
-    // DeleteNota , setPassWordEnabled, setNotePassword, setNoteCategory, setNoteSharedEmails, setBackGroundColor
+    @DeleteMapping("/deleteNota")
+    public String deleteNote(Integer noteID){
+        if (logicService.deleteNote(noteID)){
+            return "Nota eliminada con exito!";
+        }else{
+            return "Error al eliminar la nota!";
+        }
+    }
+
+    @PutMapping("/setPasswordEnabled")
+    public String setPasswordEnabled(Boolean enabled, Integer noteID, String password){
+        if (logicService.setPasswordEnabled(enabled, noteID, password)){
+            return "Password habilitado con exito!";
+        }else{
+            return "Error al habilitar password";
+        }
+    }
+
+    @PutMapping("/setCategoriaNota")
+    public String setNoteCategory(Integer noteID, String categoryName){
+        if (logicService.setNoteCategory(noteID, categoryName)){
+            return "Categoria actualizada con exito!";
+        }else{
+            return "Error al actualizar la categoria";
+        }
+    }
+
+    @PutMapping("/setColorBackgroung")
+    public String setBackgroundColor(Integer noteID, String hexCodigoColor){
+        if (logicService.setBackgroundColor(noteID, hexCodigoColor)){
+            return "Color de background actualizado con exito!";
+        }else{
+            return "Error al actualizar el color de background";
+        }
+    }
+
+    @PutMapping("/setEmailsParaNotaCompartida")
+    public String setNoteSharedEmails(Integer noteID, String tipo, String email){
+        if (logicService.setNoteSharedEmails(noteID, tipo, email)){
+            return "Emails compartidos actualizados con exito!";
+        }else{
+            return "Error al actualizar emails compartidos";
+        }
+    }
 }

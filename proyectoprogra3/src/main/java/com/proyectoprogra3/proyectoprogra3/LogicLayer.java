@@ -284,4 +284,41 @@ public class LogicLayer {
     public Boolean updateNote(Integer noteID, String texto, String titulo){
         return databaseService.updateNote(noteID, texto, titulo);
     }
+
+    public Boolean deleteNote(Integer noteID){
+        return databaseService.deleteNote(noteID);
+    }
+
+    public Boolean setPasswordEnabled(Boolean enabled, Integer noteID, String password){
+        return databaseService.setPasswordEnabled(enabled, noteID, password);
+    }
+
+    public Boolean setNoteCategory(Integer noteID, String categoryName){
+        return databaseService.setNoteCategory(noteID, categoryName);
+    }
+
+    public Boolean setBackgroundColor(Integer noteID, String hexColorCode){
+        return databaseService.setBackgroundColor(noteID, hexColorCode);
+    }
+
+    public Boolean setNoteSharedEmails(Integer noteID, String tipo, String email){
+        String dbEmails = databaseService.getEmailsCompatidos(noteID).toLowerCase();
+        email = email.toLowerCase().strip();
+        switch (tipo) {
+            case "agregar":
+                if (dbEmails.toLowerCase().contains(email)){
+                    
+                }else{
+                    dbEmails = dbEmails +","+email;
+                }
+                return databaseService.setNoteSharedEmails(noteID, dbEmails);
+            case "remover":
+                if (dbEmails.toLowerCase().contains(email)){
+                    dbEmails = dbEmails.replace(","+email, "");
+                }
+                return databaseService.setNoteSharedEmails(noteID, dbEmails);
+            default:
+                return false;
+        }
+    }
 }
