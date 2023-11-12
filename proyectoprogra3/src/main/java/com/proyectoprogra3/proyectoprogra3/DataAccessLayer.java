@@ -1,5 +1,7 @@
 package com.proyectoprogra3.proyectoprogra3;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,34 +43,61 @@ public class DataAccessLayer {
     //     }
     // }
 
-    public List<Map<String, Object>>  queryListAllUsers() {
-        List<Map<String, Object>> myList = null;
+    public List<User> queryListAllUsers() {
+        
         try {
-            myList = jdbcTemplate.queryForList("SELECT * FROM inotes.users");
+            String query = "SELECT * FROM inotes.users";
+            List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
+            List<User> listaUsers = new ArrayList<>();
+
+            for (Map<String, Object> row : resultList){
+                int userID = (int) row.get("user_id");
+                String nombreUser = (String) row.get("nombre");
+                String apellidoUser = (String) row.get("apellido");
+                String passwordUser = (String) row.get("password");
+                String emailUser = (String) row.get("email");
+                LocalDate createDate = (LocalDate) LocalDate.parse(row.get("created_date").toString());
+                LocalDate modifiedDate = (LocalDate) LocalDate.parse(row.get("modified_date").toString());
+                Boolean activeUser = (Boolean) row.get("active");
+
+                User elUser = new User(userID, nombreUser, apellidoUser, passwordUser, emailUser, createDate, modifiedDate, activeUser);
+                listaUsers.add(elUser);
+                }
             //System.out.println(myList);
-            return myList;
+            return listaUsers;
         } catch (Exception e) {
             System.out.println(e);
-            return myList;
+            return null;
         }
     }
 
-    public List<Map<String, Object>>  querySpecificUser(String email) {
-        List<Map<String, Object>> myList = null;
+    public User querySpecificUser(String email) {
         try {
-            myList = jdbcTemplate.queryForList("SELECT * FROM inotes.users WHERE email = '" + email + "'");
+            String query = "SELECT * FROM inotes.users WHERE email = ?";
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
+                int userID = (int) rs.getInt("user_id");
+                String nombreUser = rs.getString("nombre");
+                String apellidoUser = rs.getString("apellido");
+                String passwordUser = rs.getString("password");
+                String emailUser = rs.getString("email");
+                LocalDate createDate = LocalDate.parse(rs.getDate("created_date").toString());
+                LocalDate modifiedDate = LocalDate.parse(rs.getDate("modified_date").toString());
+                Boolean activeUser = rs.getBoolean("active");
+
+                return new User(userID, nombreUser, apellidoUser, passwordUser, emailUser,createDate, modifiedDate, activeUser);
+            }, email);
             //System.out.println(myList);
-            return myList;
         } catch (Exception e) {
             System.out.println(e);
-            return myList;
+            return null;
         }
     }
 
-    public boolean addUser(String nombre, String apellido, String email, String password) {
+    public boolean addUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
-            jdbcTemplate.execute("INSERT INTO inotes.users (nombre, apellido, password, email, created_date, modified_date, active) VALUES ('"+ nombre +"', '"+ apellido+"', '"+password+"', '"+email+"', '"+todayDate+"', '"+todayDate+"', 1)");
+            String query = "INSERT INTO inotes.users (nombre, apellido, password, email, created_date, modified_date, active) VALUES ('?','?','?','?','?','?', 1)";
+            jdbcTemplate.update(query, theUser.getNombre(),theUser.getApellido(), theUser.getEmail(), todayDate, todayDate, 1);
             //System.out.println(myList);
             return true;
         } catch (Exception e) {

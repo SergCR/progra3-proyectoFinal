@@ -21,115 +21,15 @@ public class LogicLayer {
 
     //------------------------------------------------------------Usuarios------------------------------------------------------------
     public List<User> getListaUsuarios(){
-        List<Map<String, Object>> myList = databaseService.queryListAllUsers();
-        List<User> usersList = new ArrayList<>();
-        Integer userID=0;
-        String nombre="", apellido="", password ="", email = "";
-        LocalDate createDate= LocalDate.parse("2020-01-01"), updatedDate = LocalDate.parse("2020-01-01");
-        Boolean activeStatus = false;
-
-        if (myList != null){
-            for (Map<String, Object> map : myList) {
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-                    
-                    switch (key) {
-                        case "user_id":
-                            userID = (Integer) value;
-                            break;
-                        case "nombre":
-                            nombre = (String) value;
-                            break;
-                        case "apellido":
-                            apellido = (String) value;
-                            break;
-                        case "password":
-                            password = (String) value;
-                            break;
-                        case "email":
-                            email = (String) value;
-                            break;
-                        case "created_date":
-                            createDate = (LocalDate) LocalDate.parse(value.toString());
-                            break;
-                        case "modified_date":
-                            updatedDate = (LocalDate) LocalDate.parse(value.toString());
-                            break;
-                        case "active":
-                            activeStatus = (Boolean) value;
-                            break;
-                        default:
-                            System.out.println(key + " - Not found in switch!");
-                            break;
-                    }
-                }
-                User thisUser = new User(userID, nombre, apellido, password, email, createDate, updatedDate, activeStatus);
-                usersList.add(thisUser);
-                //System.out.println("UserID: "+ userID +" Nombre: "+ nombre + "Apellido: "+apellido+" Created: "+createDate+" Modified: "+updatedDate+" Active: "+activeStatus);
-            }
-        }else{
-            System.out.println("My list is empty!");
-        }
-        return usersList;
+        return databaseService.queryListAllUsers();
     }
 
     public User getUsuario(String searchEmail){
-        List<Map<String, Object>> myList = databaseService.querySpecificUser(searchEmail);
-        User thisUser = null;
-        Integer userID=0;
-        String nombre="", apellido="", password ="", email = "";
-        LocalDate createDate= LocalDate.parse("2020-01-01"), updatedDate = LocalDate.parse("2020-01-01");
-        Boolean activeStatus = false;
-
-        if (myList != null){
-            for (Map<String, Object> map : myList) {
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-                    
-                    switch (key) {
-                        case "user_id":
-                            userID = (Integer) value;
-                            break;
-                        case "nombre":
-                            nombre = (String) value;
-                            break;
-                        case "apellido":
-                            apellido = (String) value;
-                            break;
-                        case "password":
-                            password = (String) value;
-                            break;
-                        case "email":
-                            email = (String) value;
-                            break;
-                        case "created_date":
-                            createDate = (LocalDate) LocalDate.parse(value.toString());
-                            break;
-                        case "modified_date":
-                            updatedDate = (LocalDate) LocalDate.parse(value.toString());
-                            break;
-                        case "active":
-                            activeStatus = (Boolean) value;
-                            break;
-                        default:
-                            System.out.println(key + " - Not found in switch!");
-                            break;
-                    }
-                }
-                thisUser = new User(userID, nombre, apellido, password, email, createDate, updatedDate, activeStatus);
-                //System.out.println("UserID: "+ userID +" Nombre: "+ nombre + "Apellido: "+apellido+" Created: "+createDate+" Modified: "+updatedDate+" Active: "+activeStatus);
-            }
-        }else{
-            System.out.println("My list is empty!");
-        }
-
-        return thisUser;
+        return databaseService.querySpecificUser(searchEmail);
     }
 
-    public boolean addUser(String nombre, String apellido, String email, String password){
-        return databaseService.addUser(nombre, apellido, email, password);
+    public boolean addUser(User theUser){
+        return databaseService.addUser(theUser);
     }
 
     public boolean updateUser(Integer userid, String nombre, String apellido, String email, String password){

@@ -109,16 +109,6 @@ public class User {
     
     //************************************************************Class Funtions************************************************************
 
-    // public void addNota(String noteText, String noteTitle){
-    //     Notes laNote = new Notes(noteText, noteTitle);
-    //     this.listaNotas.add(laNote);
-    // }
-
-    // public void updateNota(String noteText, String noteTitle, int index){
-    //     Notes newNote = new Notes(noteText, noteTitle);
-    //     this.listaNotas.set(index, newNote);
-    // }
-
     public void deleteNota(int index){
         this.listaNotas.remove(index);
     }
