@@ -1,7 +1,10 @@
 package com.proyectoprogra3.proyectoprogra3;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 
 public class User {
@@ -14,6 +17,7 @@ public class User {
     private LocalDate createdDate;
     private LocalDate modifiedDate;
     private boolean activeStatus;
+    private String jwtToken;
 
     private List<Notes> listaNotas = new ArrayList<Notes>();
 
@@ -29,6 +33,14 @@ public class User {
     public User(String email){
         this.email = email.toLowerCase().strip();
     }
+
+    public User(int usuarioID, String email, String password){
+        this.usuarioID = usuarioID;
+        this.email = email.toLowerCase().strip();
+        this.password = password;
+        this.jwtToken = generateJsonWebToken(email, password);
+    }
+
     public User(int usuarioID, String nombre, String apellido, String password, String email){
         this.usuarioID = usuarioID;
         this.nombre = nombre;
@@ -103,6 +115,10 @@ public class User {
         return password;
     }
 
+    public String getJWTToken() {
+        return jwtToken;
+    }
+    
     public String getEmail() {
         return email;
     }
@@ -144,5 +160,27 @@ public class User {
         }
 
         return notasEncontradas;
+    }
+
+    private String generateJsonWebToken(String email, String password) {
+        String elSecreto = "msX8ssd7C&2N5XXUuE#JXx*j5";
+        try {
+            // Concatenate username, password, and secret key
+            String hashedString = email + elSecreto + password;
+            // Use SHA-256 algorithm to hash the data
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = digest.digest(hashedString.getBytes(StandardCharsets.UTF_8));
+
+            // Convert hashed bytes to a hexadecimal representation
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashedBytes) {
+                hexString.append(String.format("%02x", b));
+            }
+            System.out.println("jtw = " + hexString.toString());
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null; // Handle the exception appropriately in a real-world scenario
+        }
     }
 }

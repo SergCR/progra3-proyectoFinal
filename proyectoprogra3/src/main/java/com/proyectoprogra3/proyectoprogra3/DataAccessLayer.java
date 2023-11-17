@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class DataAccessLayer {
     @Autowired
     private LogicLayer logicService;
 
-    public boolean isDatabaseConnected() {
+    public Boolean isDatabaseConnected() {
         try {
             jdbcTemplate.queryForObject("SELECT 1 FROM DUAL", Integer.class);
             return true;
@@ -24,6 +26,65 @@ public class DataAccessLayer {
         }
     }
     
+    public User authenticateUser(String email, String password) {
+        email = email.toLowerCase();
+        try {
+            String query = "SELECT * FROM Users WHERE email = ? and password = ?";
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
+                    int qUserID = (int) rs.getInt("user_id");
+                    String qEmail = rs.getString("email");
+                    String qPassword = rs.getString("password");
+                    return new User(qUserID, qEmail, qPassword);
+            }, email, password);
+        }catch(EmptyResultDataAccessException e) {
+            //throw new RuntimeException("User ID does not exist");
+            System.out.println("User does not exist!");
+            return null;
+        }catch(IncorrectResultSizeDataAccessException e) {
+            //throw new RuntimeException("More than one users with the same Id .......");
+            System.out.println("Multiple users match!");
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Boolean saveAccessToken(String token, String email){
+        String expirationDate = LocalDate.now().toString();
+        try{
+            String query = "INSERT INTO inotes.tokens (token, expiration, email) VALUES (?, ?, ?)";
+            jdbcTemplate.update(query, token, expirationDate, email);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public Boolean validateToken(String token){
+        // 3f54f747ac23d5067c1a7324de070c5f27da8d3c34bc9ce1bed0929e9c14004b
+
+        try {
+            String todayDate = LocalDate.now().toString();
+            String query = "SELECT * FROM inotes.tokens WHERE token = ? and expiration >= ?";
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
+                    return true;
+            }, token, todayDate);
+        }catch(EmptyResultDataAccessException e) {
+            //throw new RuntimeException("User ID does not exist");
+            System.out.println("Token not found!");
+            return false;
+        }catch(IncorrectResultSizeDataAccessException e) {
+            //throw new RuntimeException("More than one users with the same Id .......");
+            System.out.println("More than one token found!");
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<User> queryListAllUsers() {
         try {
             String query = "SELECT * FROM inotes.users";
@@ -73,7 +134,7 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean addUser(User theUser) {
+    public Boolean addUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
             String query = "INSERT INTO inotes.users (nombre, apellido, password, email, created_date, modified_date, active) VALUES (?,?,?,?,?,?,?)";
@@ -86,7 +147,7 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean updateUser(User theUser) {
+    public Boolean updateUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
             String query = "UPDATE inotes.users SET nombre = ?, apellido = ?, email = ?, password = ?, modified_date = ?, active = 1 WHERE user_id = ?";
@@ -98,7 +159,7 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean deleteUser(User theUser){
+    public Boolean deleteUser(User theUser){
         try {
             String query = "DELETE FROM inotes.users WHERE email = ?";
             jdbcTemplate.update(query, theUser.getEmail());
@@ -109,7 +170,7 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean addNote(Notes theNote) {
+    public Boolean addNote(Notes theNote) {
         try {
             String query = "INSERT INTO inotes.notes (user_id, text, title, bg_color, pw_enabled, created_date, modified_date) VALUES (?, ?, ?, ?, ?, ?, ?)";
             String todayDate = LocalDate.now().toString();
@@ -266,4 +327,6 @@ public class DataAccessLayer {
             return false;
         }
     }
+
+
 }

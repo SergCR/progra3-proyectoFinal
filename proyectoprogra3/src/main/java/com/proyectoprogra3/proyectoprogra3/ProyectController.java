@@ -18,19 +18,19 @@ public class ProyectController {
 
     //------------------------------------------------------------Usuarios------------------------------------------------------------
     @GetMapping("/getListaUsuarios") //check
-    public List<User> getListaUsuarios(){
-        return logicService.getListaUsuarios();
+    public List<User> getListaUsuarios(String token){
+        return logicService.getListaUsuarios(token);
     }
 
     @GetMapping("/getUsuario") //check
-    public User getListaUsuarios(String email){
-        return logicService.getUsuario(email);
+    public User getListaUsuarios(String email, String token){
+        return logicService.getUsuario(email, token);
     }
 
     @PostMapping("/addUsuario") //check
-    public String addUsuario(String nombre, String apellido, String email, String password){
+    public String addUsuario(String nombre, String apellido, String email, String password, String token){
         User miUser = new User(0, nombre, apellido, password, email, null, null, true);
-        if (logicService.addUser(miUser)){
+        if (logicService.addUser(miUser, token)){
             return "Usuario creado con exito! : Nombre: "+ nombre +" | Apellido: "+ apellido +" | Email: "+ email;
         }else{
             return "Creacion de usuario fallida!";
@@ -38,9 +38,9 @@ public class ProyectController {
     }
 
     @PutMapping("/updateUsuario") //check
-    public String updateUsuario(Integer userid, String nombre, String apellido, String email, String password){
+    public String updateUsuario(Integer userid, String nombre, String apellido, String email, String password, String token){
         User theUser = new User(userid,nombre, apellido,password,email);
-        if (logicService.updateUser(theUser)){
+        if (logicService.updateUser(theUser, token)){
             return "Usuario actualizado con exito! : Nombre: "+ nombre +" | Apellido: "+ apellido +" | Email: "+ email;
         }else{
             return "Actualizacion de usuario fallida!";
@@ -48,9 +48,9 @@ public class ProyectController {
     }
 
     @DeleteMapping("/deleteUsuario") //check
-    public String deleteUsuario(String email){
+    public String deleteUsuario(String email, String token){
         User theUser = new User(email);
-        if (logicService.deleteUser(theUser)){
+        if (logicService.deleteUser(theUser, token)){
             return "Usuario eliminado con exito! : Email: "+ email;
         }else{
             return "Error al eliminar usuario!";
@@ -60,9 +60,9 @@ public class ProyectController {
     //------------------------------------------------------------Notas------------------------------------------------------------
 
     @PostMapping("/addNota") //check
-    public String addNota(int userID, String textoNota, String tituloNota){
+    public String addNota(int userID, String textoNota, String tituloNota, String token){
         Notes theNote = new Notes(userID, textoNota, tituloNota);
-        if (logicService.addNote(theNote)){
+        if (logicService.addNote(theNote, token)){
             return "La nota fue agregada con exito";
         }else{
             return "Error al agregar nota!";
@@ -70,22 +70,22 @@ public class ProyectController {
     }
 
     @GetMapping("/getAllNotas") //check
-    public List<Notes> getallNotes(){
-        return logicService.getAllNotes();
+    public List<Notes> getallNotes(String token){
+        return logicService.getAllNotes(token);
     }
 
     @GetMapping("/getNotasDeUsuario") //check
-    public List<Notes> getNotesForUser(String userEmail){
-        return logicService.getNotesForUser(userEmail);
+    public List<Notes> getNotesForUser(String userEmail, String token){
+        return logicService.getNotesForUser(userEmail, token);
     }
     
     @PutMapping("/updateNota") //check
-    public String updateNote(Integer noteID, String texto, String titulo){
+    public String updateNote(Integer noteID, String texto, String titulo, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
         theNote.setNoteText(texto);
         theNote.setNoteTitle(titulo);
-        if (logicService.updateNote(theNote)){
+        if (logicService.updateNote(theNote, token)){
             return "Nota actualizada con exito!";
         }else{
             return "Actualizacion de Nota fallida!";
@@ -93,10 +93,10 @@ public class ProyectController {
     }
 
     @DeleteMapping("/deleteNota") //check
-    public String deleteNote(Integer noteID){
+    public String deleteNote(Integer noteID, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
-        if (logicService.deleteNote(theNote)){
+        if (logicService.deleteNote(theNote, token)){
             return "Nota eliminada con exito!";
         }else{
             return "Error al eliminar la nota!";
@@ -104,12 +104,12 @@ public class ProyectController {
     }
     //------------------------------------------------------------Progra web------------------------------------------------------------
     @PutMapping("/setPasswordEnabled") //check
-    public String setPasswordEnabled(Boolean enabled, Integer noteID, String password){
+    public String setPasswordEnabled(Boolean enabled, Integer noteID, String password, String token){
         Notes theNote = new Notes();
         theNote.setNotePasswordEnabled(enabled);
         theNote.setNoteID(noteID);
         theNote.setNotePassword(password);
-        if (logicService.setPasswordEnabled(theNote)){
+        if (logicService.setPasswordEnabled(theNote, token)){
             if (enabled){
                 return "Password habilitado con exito!";
             }else{
@@ -121,11 +121,11 @@ public class ProyectController {
     }
 
     @PutMapping("/setCategoriaNota") //check
-    public String setNoteCategory(Integer noteID, String categoryName){
+    public String setNoteCategory(Integer noteID, String categoryName, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
         theNote.setNoteCategory(categoryName);
-        if (logicService.setNoteCategory(theNote)){
+        if (logicService.setNoteCategory(theNote, token)){
             return "Categoria actualizada con exito!";
         }else{
             return "Error al actualizar la categoria";
@@ -133,11 +133,11 @@ public class ProyectController {
     }
 
     @PutMapping("/setColorBackground")
-    public String setBackgroundColor(Integer noteID, String hexCodigoColor){
+    public String setBackgroundColor(Integer noteID, String hexCodigoColor, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
         theNote.setNoteBackgroundColor("#"+hexCodigoColor);
-        if (logicService.setBackgroundColor(theNote)){
+        if (logicService.setBackgroundColor(theNote, token)){
             return "Color de background actualizado con exito!";
         }else{
             return "Error al actualizar el color de background";
@@ -145,13 +145,19 @@ public class ProyectController {
     }
 
     @PutMapping("/setEmailsParaNotaCompartida")
-    public String setNoteSharedEmails(Integer noteID, String tipo, String email){
+    public String setNoteSharedEmails(Integer noteID, String tipo, String email, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
-        if (logicService.setNoteSharedEmails(tipo, email, theNote)){
+        if (logicService.setNoteSharedEmails(tipo, email, theNote, token)){
             return "Emails compartidos actualizados con exito!";
         }else{
             return "Error al actualizar emails compartidos";
         }
+    }
+
+    @PostMapping("/login")
+    public User loginUser(String email, String password) {
+        User tmpUser = logicService.login(email, password);
+        return tmpUser;
     }
 }
