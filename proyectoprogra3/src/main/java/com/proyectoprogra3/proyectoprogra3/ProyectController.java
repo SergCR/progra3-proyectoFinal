@@ -28,9 +28,9 @@ public class ProyectController {
     }
 
     @PostMapping("/addUsuario") //check
-    public String addUsuario(String nombre, String apellido, String email, String password, String token){
+    public String addUsuario(String nombre, String apellido, String email, String password){
         User miUser = new User(0, nombre, apellido, password, email, null, null, true);
-        if (logicService.addUser(miUser, token)){
+        if (logicService.addUser(miUser)){
             return "Usuario creado con exito! : Nombre: "+ nombre +" | Apellido: "+ apellido +" | Email: "+ email;
         }else{
             return "Creacion de usuario fallida!";
@@ -145,10 +145,10 @@ public class ProyectController {
     }
 
     @PutMapping("/setEmailsParaNotaCompartida")
-    public String setNoteSharedEmails(Integer noteID, String tipo, String email, String token){
+    public String setNoteSharedEmails(Integer noteID, String accion, String email, String token){
         Notes theNote = new Notes();
         theNote.setNoteID(noteID);
-        if (logicService.setNoteSharedEmails(tipo, email, theNote, token)){
+        if (logicService.setNoteSharedEmails(accion, email, theNote, token)){
             return "Emails compartidos actualizados con exito!";
         }else{
             return "Error al actualizar emails compartidos";

@@ -33,12 +33,8 @@ public class LogicLayer {
         }
     }
 
-    public boolean addUser(User theUser, String token){
-        if(databaseService.validateToken(token)){
-            return databaseService.addUser(theUser);
-        }else{
-            return false;
-        }
+    public boolean addUser(User theUser){
+        return databaseService.addUser(theUser);
     }
 
     public boolean updateUser(User theUser, String token){
