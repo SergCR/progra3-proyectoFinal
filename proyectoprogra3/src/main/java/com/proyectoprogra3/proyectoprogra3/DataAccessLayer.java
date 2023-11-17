@@ -1,10 +1,10 @@
 package com.proyectoprogra3.proyectoprogra3;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 public class DataAccessLayer {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private LogicLayer logicService;
 
     public boolean isDatabaseConnected() {
         try {
@@ -21,30 +23,8 @@ public class DataAccessLayer {
             return false;
         }
     }
-    // public boolean queryData() {
-    //     try {
-    //         List<String> myList = jdbcTemplate.queryForList("SELECT nombre FROM inotes.users", String.class);
-    //         System.out.println(myList);
-    //         return true;
-    //     } catch (Exception e) {
-    //         System.out.println(e);
-    //         return false;
-    //     }
-    // }
-    // public List<String> queryListUsers1() {
-    //     List<String> myList = null;
-    //     try {
-    //         myList = jdbcTemplate.queryForList("SELECT nombre FROM inotes.users", String.class);
-    //         System.out.println(myList);
-    //         return myList;
-    //     } catch (Exception e) {
-    //         System.out.println(e);
-    //         return myList;
-    //     }
-    // }
-
+    
     public List<User> queryListAllUsers() {
-        
         try {
             String query = "SELECT * FROM inotes.users";
             List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
@@ -63,7 +43,7 @@ public class DataAccessLayer {
                 User elUser = new User(userID, nombreUser, apellidoUser, passwordUser, emailUser, createDate, modifiedDate, activeUser);
                 listaUsers.add(elUser);
                 }
-            //System.out.println(myList);
+            
             return listaUsers;
         } catch (Exception e) {
             System.out.println(e);
@@ -86,7 +66,7 @@ public class DataAccessLayer {
 
                 return new User(userID, nombreUser, apellidoUser, passwordUser, emailUser,createDate, modifiedDate, activeUser);
             }, email);
-            //System.out.println(myList);
+            
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -96,9 +76,9 @@ public class DataAccessLayer {
     public boolean addUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
-            String query = "INSERT INTO inotes.users (user_id,nombre, apellido, password, email, created_date, modified_date, active) VALUES ('?','?','?','?','?','?', '?','?')";
-            jdbcTemplate.update(query,15, theUser.getNombre(),theUser.getApellido(), theUser.getEmail(), todayDate, todayDate, 1);
-            //System.out.println(myList);
+            String query = "INSERT INTO inotes.users (nombre, apellido, password, email, created_date, modified_date, active) VALUES (?,?,?,?,?,?,?)";
+            jdbcTemplate.update(query, theUser.getNombre(), theUser.getApellido(), theUser.getPassword(), theUser.getEmail(), todayDate, todayDate, 1);
+            
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -106,11 +86,11 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean updateUser(Integer userid, String nombre, String apellido, String email, String password) {
+    public boolean updateUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
-            jdbcTemplate.execute("UPDATE inotes.users SET nombre = '"+nombre+"', apellido = '"+apellido+"', email = '"+email+"', password = '"+password+"', modified_date = '"+todayDate+"', active = 1 WHERE user_id = "+userid);
-            //System.out.println(myList);
+            String query = "UPDATE inotes.users SET nombre = ?, apellido = ?, email = ?, password = ?, modified_date = ?, active = 1 WHERE user_id = ?";
+            jdbcTemplate.update(query, theUser.getNombre(), theUser.getApellido(), theUser.getEmail(), theUser.getPassword(), todayDate, theUser.getUsuarioID());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -118,10 +98,10 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean deleteUser(String email){
+    public boolean deleteUser(User theUser){
         try {
-            jdbcTemplate.execute("DELETE FROM inotes.users WHERE email = '"+email+"'");
-            //System.out.println(myList);
+            String query = "DELETE FROM inotes.users WHERE email = ?";
+            jdbcTemplate.update(query, theUser.getEmail());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -129,11 +109,83 @@ public class DataAccessLayer {
         }
     }
 
-    public boolean addNote(int userID, String textoNota, String tituloNota) {
+    public boolean addNote(Notes theNote) {
+        try {
+            String query = "INSERT INTO inotes.notes (user_id, text, title, bg_color, pw_enabled, created_date, modified_date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String todayDate = LocalDate.now().toString();
+            jdbcTemplate.update(query, theNote.getUserID(), theNote.getNoteText(), theNote.getNoteTitle(), theNote.getNoteBackgroundColor(), theNote.getNotePasswordEnabled(), todayDate, todayDate);
+            
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+
+    public List<Notes> queryListAllNotes(){
+        List<Notes> listOfNotes = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM inotes.notes";
+            List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query);
+
+            for (Map<String, Object> row : resultList){
+                int note_id = (int) row.get("note_id");
+                int user_id = (int) row.get("user_id");
+                String noteText = (String) row.get("text");
+                String noteTitle = (String) row.get("title");
+                String noteBGColor = (String) row.get("bg_color");
+                Boolean notePWEnabled = (Boolean) row.get("pw_enabled");
+                String notePW = (String) row.get("note_password");
+                String noteCategory = (String) row.get("note_category");
+                List<User> noteListUsers = logicService.buildUsersListFromEmailsString((String) row.get("note_shared_with_emails"));
+                LocalDate createDate = LocalDate.parse((String) row.get("created_date").toString());
+                LocalDate modifiedDate = LocalDate.parse((String) row.get("modified_date").toString());
+
+                Notes theNote = new Notes(note_id, user_id, noteText, noteTitle, noteBGColor, notePWEnabled, notePW, noteCategory, noteListUsers,createDate, modifiedDate);
+                listOfNotes.add(theNote);
+                }
+            return listOfNotes;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public List<Notes> queryNotesForUser(User theUser){
+        List<Notes> listOfNotes = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM inotes.notes WHERE user_id = ? OR note_shared_with_emails like '%"+theUser.getEmail()+"%'";
+            List<Map<String, Object>> resultList = jdbcTemplate.queryForList(query, theUser.getUsuarioID());
+
+            for (Map<String, Object> row : resultList){
+                int note_id = (int) row.get("note_id");
+                int user_id = (int) row.get("user_id");
+                String noteText = (String) row.get("text");
+                String noteTitle = (String) row.get("title");
+                String noteBGColor = (String) row.get("bg_color");
+                Boolean notePWEnabled = (Boolean) row.get("pw_enabled");
+                String notePW = (String) row.get("note_password");
+                String noteCategory = (String) row.get("note_category");
+                List<User> noteListUsers = logicService.buildUsersListFromEmailsString((String) row.get("note_shared_with_emails"));
+                LocalDate createDate = LocalDate.parse((String) row.get("created_date").toString());
+                LocalDate modifiedDate = LocalDate.parse((String) row.get("modified_date").toString());
+                
+                Notes theNote = new Notes(note_id, user_id,noteText, noteTitle, noteBGColor, notePWEnabled, notePW, noteCategory, noteListUsers,createDate, modifiedDate);
+                listOfNotes.add(theNote);
+                }
+            return listOfNotes;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public Boolean updateNote(Notes theNote){
         try {
             String todayDate = LocalDate.now().toString();
-            jdbcTemplate.execute("INSERT INTO inotes.notes (user_id, text, title, bg_color, pw_enabled, note_password, note_category, note_shared_with_userIDs, created_date, modified_date) VALUES ('"+ userID +"', '"+ textoNota+"', '"+tituloNota+"', '#FFFFFF', 0, '', '', '', '"+todayDate+"', '"+todayDate+"')");
-            //System.out.println(myList);
+            String query = "UPDATE inotes.notes SET text = ?, title = ?, modified_date = ? WHERE note_id = ?";
+            jdbcTemplate.update(query, theNote.getNoteText(), theNote.getNoteTitle(), todayDate, theNote.getNoteID());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -141,63 +193,27 @@ public class DataAccessLayer {
         }
     }
 
-
-    public List<Map<String, Object>> queryListAllNotes(){
-        List<Map<String, Object>> myList = null;
+    public Boolean deleteNote(Notes theNote){
         try {
-            myList = jdbcTemplate.queryForList("SELECT * FROM inotes.notes");
-            //System.out.println(myList);
-            return myList;
+            String query = "DELETE FROM inotes.notes WHERE note_id = ?";
+            jdbcTemplate.update(query, theNote.getNoteID());
+            return true;
         } catch (Exception e) {
             System.out.println(e);
-            return myList;
+            return false;
         }
     }
 
-    public List<Map<String, Object>> queryNotesForUser(Integer userID, String userEmail){
-        List<Map<String, Object>> myList = null;
-        try {
-            myList = jdbcTemplate.queryForList("SELECT * FROM inotes.notes WHERE user_id = "+userID+" OR note_shared_with_emails like '%"+userEmail+"%'");
-            //System.out.println(myList);
-            return myList;
-        } catch (Exception e) {
-            System.out.println(e);
-            return myList;
-        }
-    }
-
-    public Boolean updateNote(Integer noteID, String texto, String titulo){
+    public Boolean setPasswordEnabled(Notes theNote){
         try {
             String todayDate = LocalDate.now().toString();
-            jdbcTemplate.execute("UPDATE inotes.notes SET text = '"+texto+"', title = '"+titulo+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
-            //System.out.println(myList);
-            return true;
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-    }
-
-    public Boolean deleteNote(Integer noteID){
-        try {
-            jdbcTemplate.execute("DELETE FROM inotes.notes WHERE note_id = "+noteID);
-            //System.out.println(myList);
-            return true;
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-    }
-
-    public Boolean setPasswordEnabled(Boolean enabled, Integer noteID, String password){
-        try {
-            String todayDate = LocalDate.now().toString();
-            if (enabled){
-                jdbcTemplate.execute("UPDATE inotes.notes SET pw_enabled = 1, note_password = '"+password+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+            if (theNote.getNotePasswordEnabled()){
+                String query = "UPDATE inotes.notes SET pw_enabled = 1, note_password = ?, modified_date = ? WHERE note_id = ?";
+                jdbcTemplate.update(query, theNote.getNotePassword(), todayDate, theNote.getNoteID());
             }else{
-                jdbcTemplate.execute("UPDATE inotes.notes SET pw_enabled = 0, note_password = '', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
+                String query = "UPDATE inotes.notes SET pw_enabled = 0, note_password = '', modified_date = ? WHERE note_id = ?";
+                jdbcTemplate.update(query, todayDate, theNote.getNoteID());
             }
-            //System.out.println(myList);
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -205,11 +221,11 @@ public class DataAccessLayer {
         }
     }
 
-    public Boolean setNoteCategory(Integer noteID, String categoryName){
+    public Boolean setNoteCategory(Notes theNote){
         try {
             String todayDate = LocalDate.now().toString();
-            jdbcTemplate.execute("UPDATE inotes.notes SET note_category = '"+categoryName+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
-            //System.out.println(myList);
+            String query = "UPDATE inotes.notes SET note_category = ?, modified_date = ? WHERE note_id = ?";
+            jdbcTemplate.update(query, theNote.getNoteCategory(), todayDate, theNote.getNoteID());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -217,12 +233,11 @@ public class DataAccessLayer {
         }
     }
 
-    public Boolean setBackgroundColor(Integer noteID, String hexColorCode){
+    public Boolean setBackgroundColor(Notes theNote){
         try {
             String todayDate = LocalDate.now().toString();
-            hexColorCode = "#"+hexColorCode;
-            jdbcTemplate.execute("UPDATE inotes.notes SET bg_color = '"+hexColorCode+"', modified_date = '"+todayDate+"' WHERE note_id = "+noteID);
-            //System.out.println(myList);
+            String query = "UPDATE inotes.notes SET bg_color = ?, modified_date = ? WHERE note_id = ?";
+            jdbcTemplate.update(query, theNote.getNoteBackgroundColor(), todayDate, theNote.getNoteID());
             return true;
         } catch (Exception e) {
             System.out.println(e);
@@ -230,12 +245,12 @@ public class DataAccessLayer {
         }
     }
 
-    public String getEmailsCompatidos(Integer noteID){
-        List<Map<String, Object>> myList = null;
+    public String getEmailsCompatidos(Notes theNote){
         try {
-            myList = jdbcTemplate.queryForList("SELECT note_shared_with_emails FROM inotes.notes WHERE note_id = "+noteID);
-            String emails = myList.get(0).get("note_shared_with_emails").toString();
-            return emails;
+            String query = "SELECT note_shared_with_emails FROM inotes.notes WHERE note_id = ?";
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> {
+            return rs.getString("nombre");
+        }, theNote.getNoteID());
         } catch (Exception e) {
             System.out.println(e);
             return "transaccion invalida";

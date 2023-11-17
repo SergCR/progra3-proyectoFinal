@@ -20,13 +20,29 @@ public class User {
     //************************************************************Contructors************************************************************
     public User() {
     }
+    
+    // public User(String email, Integer usuarioID){
+    //     this.email = email;
+    //     this.usuarioID = usuarioID;
+    // }
+
+    public User(String email){
+        this.email = email.toLowerCase().strip();
+    }
+    public User(int usuarioID, String nombre, String apellido, String password, String email){
+        this.usuarioID = usuarioID;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.password = password;
+        this.email = email.toLowerCase().strip();
+    }
 
     public User(int usuarioID, String nombre, String apellido, String password, String email, LocalDate createdDate, LocalDate modifiedDate, boolean activeStatus) {
         this.usuarioID = usuarioID;
         this.nombre = nombre;
         this.apellido = apellido;
         this.password = password;
-        this.email = email;
+        this.email = email.toLowerCase().strip();
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
         this.activeStatus = activeStatus;

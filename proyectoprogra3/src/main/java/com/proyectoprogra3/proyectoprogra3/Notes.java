@@ -22,9 +22,17 @@ public class Notes {
         this.noteSharedWithListOfUsers = new ArrayList<>();
     }
 
-
-    //************************************************************Setters and Getters************************************************************
-    //##################################################################Setters##################################################################
+    public Notes(int userID, String noteText, String noteTitle){
+        this.noteID = 0;
+        this.userID = userID;
+        this.noteText = noteText;
+        this.noteTitle = noteTitle;
+        this.noteBackgroundColor = "#FFFFFF";
+        this.notePasswordEnabled = false;
+        this.notePassword = "";
+        this.noteCategory = "";
+        this.noteSharedWithListOfUsers = new ArrayList<>();
+    }
 
     public Notes(Integer noteID, Integer userID, String noteText, String noteTitle, String noteBackgroundColor, Boolean notePasswordEnabled, String notePassword, String noteCategory, List<User> noteSharedWithListOfUsers, LocalDate createdDate, LocalDate modifiedDate) {
         this.noteID = noteID;
@@ -40,6 +48,8 @@ public class Notes {
         this.modifiedDate = modifiedDate;
     }
 
+    //************************************************************Setters and Getters************************************************************
+    //##################################################################Setters##################################################################
 
     public void setNoteID(Integer noteID) {
         this.noteID = noteID;
@@ -128,6 +138,14 @@ public class Notes {
 
     public List<User> getNoteSharedWithListOfUsers(){
         return noteSharedWithListOfUsers;
+    }
+
+    public String getNoteSharedWithStringOfUsers(){
+        String stringOfUsers = "";
+        for (User userIterator : noteSharedWithListOfUsers){
+            stringOfUsers = stringOfUsers +","+userIterator.getEmail().toLowerCase();
+        }
+        return stringOfUsers;
     }
 
     //************************************************************Class Funtions************************************************************
