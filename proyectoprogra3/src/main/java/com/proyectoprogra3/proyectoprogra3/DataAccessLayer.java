@@ -127,10 +127,23 @@ public class DataAccessLayer {
 
                 return new User(userID, nombreUser, apellidoUser, passwordUser, emailUser,createDate, modifiedDate, activeUser);
             }, email);
-            
+        }catch(EmptyResultDataAccessException e) {
+            //throw new RuntimeException("User ID does not exist");
+            System.out.println("User not found");
+            User theUser = new User();
+            theUser.setEmail("");
+            return theUser;
+        }catch(IncorrectResultSizeDataAccessException e) {
+            //throw new RuntimeException("More than one users with the same Id .......");
+            System.out.println("More than one user found!");
+            User theUser = new User();
+            theUser.setEmail("");
+            return theUser;
         } catch (Exception e) {
-            System.out.println(e);
-            return null;
+            e.printStackTrace();
+            User theUser = new User();
+            theUser.setEmail("");
+            return theUser;
         }
     }
 

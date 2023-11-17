@@ -143,6 +143,7 @@ public class LogicLayer {
     }
 
     public List<User> buildUsersListFromEmailsString(String emails){
+        System.out.println("Emails: "+emails);
             List<User> listaUsers = new ArrayList<>();
             String cleanString = "";
             if (emails == null || emails.contentEquals(cleanString)){
@@ -153,9 +154,9 @@ public class LogicLayer {
                 //Convierte el array en una lista iterable
                 List<String> usersTempList = Arrays.asList(usersTempArray);
                 //Itera la lista de emails
-                for (String usersIterator : usersTempList) {
+                for (String usersIterator1 : usersTempList) {
                     //Busca la informacion de cada usuario y lo agrega a la lista de Users que es una variable tipo List de la clase Notes
-                    listaUsers.add(databaseService.querySpecificUser(usersIterator));
+                    listaUsers.add(databaseService.querySpecificUser(usersIterator1));
                 }
             }
             return listaUsers;
