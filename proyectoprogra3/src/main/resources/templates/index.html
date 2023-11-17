@@ -1,11 +1,176 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto Programacion 3 - 2023 Q3</title>
-</head>
-<body>
-    
-</body>
-</html>
+<<!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Proyecto Final - Programacion 3</title>
+    </head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+    </style>
+    <body>
+        <h1>Integrantes:</h1>
+        <p>Sergio Aguero Valle</p>
+        <p>Fabricio Herrera Montero</p>
+        <p>Jose David Marín Serrano</p>
+        <p>Sergio Herrera Guitierrez</p>
+
+        <br>
+        <br>
+        <h1>Tabla usuario</h1>
+
+        <table class="tg">
+            <thead>
+                <tr>
+                    <th class="tg-uzvj">Metodo de usuario</th>
+                    <th class="tg-wa1i">URL</th>
+                    <th class="tg-0lax">Atributos</th>
+                    <th class="tg-wa1i">Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tg-cly1">GET</td>
+                    <td class="tg-cly1">localhost:8081/getListaUsuarios</td>
+                    <td class="tg-0lax">>ListaUsuarios</td>
+                    <td class="tg-cly1">Imprime la lista de usuarios</td>
+                </tr>
+                <tr>
+                    <td class="tg-cly1">GET</td>
+                    <td class="tg-cly1">localhost:8081/getUsuario</td>
+                    <td class="tg-0lax">String email</td>
+                    <td class="tg-cly1">Trae un usuario en específico usando el email</td>
+                </tr>
+                <tr>
+                    <td class="tg-0lax">POST</td>
+                    <td class="tg-0lax">localhost:8081/addUsuario</td>
+                    <td class="tg-0lax">String nombre, String apellido, String email, String password</td>
+                    <td class="tg-0lax">Añade un usuario</td>
+                </tr>
+                <tr>
+                    <td class="tg-cly1">UPDATE</td>
+                    <td class="tg-cly1">localhost:8081/updateUsuario</td>
+                    <td class="tg-0lax">Integer userid, String nombre, String apellido, String email, String password</td>
+                    <td class="tg-cly1">Actualiza la informacion del usuario</td>
+                </tr>
+                <tr>
+                    <td class="tg-cly1">DELETE</td>
+                    <td class="tg-cly1">localhost:8081/deleteUsuario</td>
+                    <td class="tg-0lax">String email</td>
+                    <td class="tg-cly1">Elimina el usuario</td>
+                </tr>
+            </tbody>
+
+        </table>
+        <h1>Tabla notas</h1>
+        <table class="tg">
+            <thead>
+                <tr>
+                    <th class="tg-uzvj">Metodo de Notas</th>
+                    <th class="tg-uzvj">URL</th>
+                    <th class="tg-0lax">Atributos</th>
+                    <th class="tg-uzvj">Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tg-lboi">GET</td>
+                    <td class="tg-lboi">localhost:8081/addNotas</td>
+                    <td class="tg-0lax">int userID, String textoNota, String tituloNota</td>
+                    <td class="tg-lboi">Agrega notas</td>
+                </tr>
+                <tr>
+                    <td class="tg-lboi">GET</td>
+                    <td class="tg-lboi">localhost:8081/getAllNotas</td>
+                    <td class="tg-0lax">AllNotas</td>
+                    <td class="tg-lboi">Trae todas las notas</td>
+                </tr>
+                <tr>
+                    <td class="tg-0pky">GET</td>
+                    <td class="tg-0pky">localhost:8081/getNotasDeUsuarios</td>
+                    <td class="tg-0lax">String userEmail</td>
+                    <td class="tg-0pky">Trae una nota en específicos</td>
+                </tr>
+                <tr>
+                    <td class="tg-lboi">UPDATE</td>
+                    <td class="tg-lboi">localhost:8081/updateNota</td>
+                    <td class="tg-0lax">Integer noteID, String texto, String titulo</td>
+                    <td class="tg-lboi">Actualiza la informacion de la nota</td>
+                </tr>
+                <tr>
+                    <td class="tg-lboi">DELETE</td>
+                    <td class="tg-lboi">localhost:8081/deleteNota</td>
+                    <td class="tg-0lax">Integer noteID</td>
+                    <td class="tg-lboi">Elimina la nota</td>
+                </tr>
+            </table>
+            <h1>Tabla para los de Progra web</h1>
+        <table>
+            <th class="tg-uzvj">Metodo de progra web</th>
+            <th class="tg-uzvj">URL</th>
+            <th class="tg-0lax">Atributos</th>
+            <th class="tg-uzvj">Descripcion</th>
+            <tr>
+                <td class="tg-0pky">PUT</td>
+                <td class="tg-0pky">localhost:8081/setPasswordEnabled</td>
+                <td class="tg-0lax">Boolean enabled, Integer noteID, String password</td>
+
+                <td class="tg-0pky">metodo para los de progra web, setiar una contraseña</td>
+            </tr>
+            <tr>
+                <td class="tg-0pky">PUT</td>
+                <td class="tg-0pky">localhost:8081/setCategoriaNota</td>
+                <td class="tg-0lax">Integer noteID, String categoryName</td>
+                <td class="tg-0pky">metodo para los de progra web, setiar una categoria</td>
+            </tr>
+            <tr>
+                <td class="tg-0pky">PUT</td>
+                <td class="tg-0pky">localhost:8081/setColorBackgroung</td>
+                <td class="tg-0lax">Integer noteID, String hexCodigoColor</td>
+                <td class="tg-0pky">metodo para los de progra web, setiar el color de fondo de la nota</td>
+            </tr>
+            <tr>
+                <td class="tg-0pky">PUT</td>
+                <td class="tg-0pky">localhost:8081/setEmailsParaNotaCompartida</td>
+                <td class="tg-0lax">Integer noteID, String tipo, String email</td>
+                <td class="tg-0pky">metodo para los de progra web, setiar emails y compartir la nota</td>
+            </tr>
+
+            </table>
+
+               
+            </tbody>
+        </table>
+    </body>
+
+    </html>

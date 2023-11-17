@@ -96,8 +96,8 @@ public class DataAccessLayer {
     public boolean addUser(User theUser) {
         try {
             String todayDate = LocalDate.now().toString();
-            String query = "INSERT INTO inotes.users (nombre, apellido, password, email, created_date, modified_date, active) VALUES ('?','?','?','?','?','?', 1)";
-            jdbcTemplate.update(query, theUser.getNombre(),theUser.getApellido(), theUser.getEmail(), todayDate, todayDate, 1);
+            String query = "INSERT INTO inotes.users (user_id,nombre, apellido, password, email, created_date, modified_date, active) VALUES ('?','?','?','?','?','?', '?','?')";
+            jdbcTemplate.update(query,15, theUser.getNombre(),theUser.getApellido(), theUser.getEmail(), todayDate, todayDate, 1);
             //System.out.println(myList);
             return true;
         } catch (Exception e) {

@@ -108,7 +108,7 @@ public class ProyectController {
             return "Error al eliminar la nota!";
         }
     }
-
+//------------------------------------------------------------Progra web------------------------------------------------------------
     @PutMapping("/setPasswordEnabled")
     public String setPasswordEnabled(Boolean enabled, Integer noteID, String password){
         if (logicService.setPasswordEnabled(enabled, noteID, password)){
